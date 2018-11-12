@@ -7,7 +7,7 @@
 syg_cheb = filtfilt(b,a, syg_po_filtracji);
 figure 
 subplot(211);plot(t,syg_po_filtracji);
-xlabel('Time(sec)'); ylabel('ECG(mV)'); title('Original')
+xlabel('Time(sec)'); ylabel('ECG(mV)'); title('Original'); axis ([0 10 -0.5 0.5]);
 subplot(212);plot(t,syg_cheb);
-xlabel('Time(sec)'); ylabel('ECG(mV)'); title('Removing baseline wander Chebyshev filter');
+xlabel('Time(sec)'); ylabel('ECG(mV)'); title('Removing baseline wander Chebyshev filter'); axis ([0 10 -0.5 0.5]);
   end
