@@ -39,7 +39,7 @@ t = [0:N-1]/fs; % time array of the data
 
 %% Butterworth
 n = 1;
-Ws = 0.1;
+Ws = 0.01;
 [b,a] = butter(n, Ws, 'High');
 syg_butter = filter(b,a,syg_po_filtracji);
 
@@ -91,10 +91,10 @@ xlabel('Time(sec)'); ylabel('ECG(mV)'); title('Removing baseline wander moving a
  
 
 %% LMS
-fc2 = 5;
-fc2 = fc2/(fs/2);
-fc1 = 15;
 fs = 360;
+fc2 = 2;
+fc2 = fc2/(fs/2);
+fc1 = 34;
 fc1 = fc1/(fs/2);
 M = 25;
 N = -M:M;
@@ -113,12 +113,12 @@ xlabel('Time(sec)'); ylabel('ECG(mV)'); title('Removing baseline wander LMS');ax
 %% Savitzky Golay
 
 order = 3;
-framelen = 11;
+framelen = 17;
 
 sgf = sgolayfilt(syg_po_filtracji,order,framelen);
 figure 
 subplot(211);plot(t,syg_po_filtracji);
 xlabel('Time(sec)'); ylabel('ECG(mV)'); title('Original');axis ([0 10 -0.5 0.5]);
-subplot(212);plot(t,syg_LMS);
+subplot(212);plot(t,sgf);
 xlabel('Time(sec)'); ylabel('ECG(mV)'); title('Removing baseline wander Savitzky Golay');axis ([0 10 -0.5 0.5]);
 
