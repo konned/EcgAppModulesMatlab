@@ -4,7 +4,9 @@ clc
 
 load -ascii 100_V5.dat
 syg = [X100_V5];
-syg = syg(1:5000);
+a = 1;      %To mozna zmieniac!!!!!!!!!
+b = 5000;   %To mozna zmieniac!!!!!!!!!
+syg = syg(a:b);
 plot(syg) 
 
 %% Filtracja dolnoprzepustowa
@@ -37,18 +39,21 @@ fs=360; % sampling frequency 500 Hz
 N=length(syg_po_filtracji); % data length
 t = [0:N-1]/fs; % time array of the data
 
+
+
 %% Butterworth
 n = 1;
 Ws = 0.01;
 [b,a] = butter(n, Ws, 'High');
-syg_butter = filter(b,a,syg_po_filtracji);
+syg_Butterworth = filter(b,a,syg_po_filtracji);
 
 figure 
 subplot(211);plot(t,syg_po_filtracji);
 xlabel('Time(sec)'); ylabel('ECG(mV)'); title('Original'); axis ([0 10 -0.5 0.5]);
-subplot(212);plot(t,syg_butter);
+subplot(212);plot(t,syg_Butterworth);
 xlabel('Time(sec)'); ylabel('ECG(mV)'); title('Removing baseline wander Butterworth filter'); axis ([0 10 -0.5 0.5]);
 %Butterworth(t,syg_po_filtracji);
+
 
 
 %% Czebyszewa
@@ -60,7 +65,7 @@ Rp = 10;                                                % Passband Ripple (dB)
 Rs = 30;                                                % Stopband Ripple (dB)
 
 
-Chebyshev_filter(Fn, Wp, Ws, Rp, Rs, t, syg_po_filtracji);
+syg_Chebyshev = Chebyshev_filter(Fn, Wp, Ws, Rp, Rs, t, syg_po_filtracji);
 
 
 %% Keiser
@@ -69,7 +74,7 @@ fcuts = [0.5 1.0 45 46];                                        % Frequency Vect
 mags =   [0 1 0];                                               % Magnitude (Defines Passbands & Stopbands)
 devs = [0.05  0.01  0.05];                                      % Allowable Deviations
 
-Keiser_filter (Fn, fcuts, mags, devs, t, syg_po_filtracji);
+syg_Keiser = Keiser_filter (Fn, fcuts, mags, devs, t, syg_po_filtracji);
 
 %% Moving average
 
@@ -81,12 +86,12 @@ windowSize = 97;
 b = (1/windowSize)*ones(1,windowSize);
 a = 1;
 y = filter(b,a,syg_po_filtracji);
-y = syg_po_filtracji - y;
+syg_MovingAverage = syg_po_filtracji - y;
 
 figure 
 subplot(211);plot(t,syg_po_filtracji);
 xlabel('Time(sec)'); ylabel('ECG(mV)'); title('Original'); axis ([0 10 -0.5 0.5]);
-subplot(212);plot(t,y);
+subplot(212);plot(t,syg_MovingAverage);
 xlabel('Time(sec)'); ylabel('ECG(mV)'); title('Removing baseline wander moving average filter'); axis ([0 10 -0.5 0.5]);
  
 
@@ -115,10 +120,10 @@ xlabel('Time(sec)'); ylabel('ECG(mV)'); title('Removing baseline wander LMS');ax
 order = 3;
 framelen = 17;
 
-sgf = sgolayfilt(syg_po_filtracji,order,framelen);
+syg_SavitzkyGolay = sgolayfilt(syg_po_filtracji,order,framelen);
 figure 
 subplot(211);plot(t,syg_po_filtracji);
 xlabel('Time(sec)'); ylabel('ECG(mV)'); title('Original');axis ([0 10 -0.5 0.5]);
-subplot(212);plot(t,sgf);
+subplot(212);plot(t,syg_SavitzkyGolay);
 xlabel('Time(sec)'); ylabel('ECG(mV)'); title('Removing baseline wander Savitzky Golay');axis ([0 10 -0.5 0.5]);
 

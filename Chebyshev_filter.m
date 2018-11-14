@@ -1,4 +1,4 @@
-function [syg_cheb] = Chebyshev_filter (Fn, Wp, Ws, Rp, Rs, t, syg_po_filtracji)
+function [syg_cheb]=Chebyshev_filter (Fn, Wp, Ws, Rp, Rs, t, syg_po_filtracji)
 
 % Stopband Ripple (dB)
 [n,Ws] = cheb2ord(Wp, Ws, Rp, Rs);                      % Chebyshev Type II Order

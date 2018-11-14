@@ -1,4 +1,4 @@
-function [syg_Keiser] = Keiser_filter(Fn, fcuts, mags, devs, t, syg_po_filtracji)
+function [syg_Keiser]=Keiser_filter(Fn, fcuts, mags, devs, t, syg_po_filtracji)
 
 [n,Wn,beta,ftype] = kaiserord(fcuts,mags,devs,Fn);
 n = n + rem(n,2);
