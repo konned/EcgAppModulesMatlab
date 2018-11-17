@@ -117,13 +117,16 @@ xlabel('Time(sec)'); ylabel('ECG(mV)'); title('Removing baseline wander LMS');ax
 
 %% Savitzky Golay
 
-order = 3;
-framelen = 17;
+order =3;
+framelen = 25;
+m = (framelen-1)/2;
 
-syg_SavitzkyGolay = sgolayfilt(syg_po_filtracji,order,framelen);
+B = sgolay(order,framelen);
+syg_SavitzkyGolay = conv(syg_po_filtracji, B(m+1,:), 'same');
 figure 
 subplot(211);plot(t,syg_po_filtracji);
 xlabel('Time(sec)'); ylabel('ECG(mV)'); title('Original');axis ([0 10 -0.5 0.5]);
 subplot(212);plot(t,syg_SavitzkyGolay);
 xlabel('Time(sec)'); ylabel('ECG(mV)'); title('Removing baseline wander Savitzky Golay');axis ([0 10 -0.5 0.5]);
+
 
