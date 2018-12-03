@@ -8,12 +8,7 @@ function [Tends] = findT (signal, Rpeaks, QRSonsets, QRSends, Ponsets, fs)
     % Wyciecie odcinkow QRS
     signal = removeQRS (signal, QRSonsets, QRSends, fs);
     
-    % Dodanie/odjecie wartosci do poczatku i konca sygnalu
-    % ze wzgledu na warunki brzegowe
-    signal = [ones(100,1).*signal(1); signal; ones(100,1).*signal(end)];
     signal = differentiation(signal)';          % Rozniczkowanie
-    signal = signal(101:end-100);
-
     h_w_d = myfilterdesign(1, fs, 15, 20, 2);   % Filtracja dolnoprzep.
     signal = myfilter(signal, h_w_d);
     

@@ -1,63 +1,50 @@
-function [peakS, peakT, peakV] = findR (t, signal, fs)
-%     peakT - probki czasu zalamkow R
-%     peakV - amplotudy zalamkow R 
-%     peakS - numery probek zalamkow R
-%     t - wektor czasu sygnalu EKG
-%     signal - sygnal EKG po calkowaniu
+function [Rpeaks] = findR (signal, fs)
 
     % Przetwarzanie sygnalu
     f_g = 5;    % Filtracja gornoprzepustowa
     M = 30;
     h_w_g = myfilterdesign(2, fs, f_g, M, 2);
     signal = myfilter(signal, h_w_g); 
-    
+
     signal = differentiation(signal);   % Rozniczkowanie
     signal = signal .^2;                % Potegowanie
     signal = integration(signal, 19);   % Calkowanie
 
-    % Wyszukiwanie maksimow lokalnych w sygnale
-    [A,B] = findpeaks(signal);
-    thres = max(A)/10;
-    C = find(A>thres);
-    peak_value = zeros(1,length(C));
-    peak_number = zeros(1,length(C));
-    for i=1 : length(C)
-        peak_value(i) = A(C(i));
-        peak_number(i) = B(C(i));
-    end
-    peak_time = 1/fs .* (peak_number - 1);
+    % Wyszukiwanie pikow
+    thres = max(signal)/10;
+    [peakValue, peakNumber] = findPeak(signal,thres);
 
-    max_value = peak_value(1);
-    max_time = peak_time(1);
-    peakT = [];
-    peakV = [];
+    max_value = peakValue(1);
+    max_number = peakNumber(1);
+    nrOfSamples = 0.2 * fs;
+    
+    Rpeaks = [];
+
     % Ponowne wyszukiwanie maksimow lokalnych z zalozeniem,
     % ze odleglosc pomiedzy kolejnymi maksimami jest nie mniejsza niz 0.2s
-    for i = 2 : length(peak_value)
-        % Sprawdzenie czy obecna probka jest wieksza od tymczasowego
-        % maksimum oraz czy odleglosc pomiedzy nimi jest mniejsza od 0.2s
-        if((peak_value(i) > max_value) & ((peak_time(i) - max_time) < 0.2))
-            max_value = peak_value(i);
-            max_time = peak_time(i);
+    if (length(peakValue) > 1) % jezeli znaleziono wiecej niz jedno maksimum
+        for i = 2 : length(peakValue)
+            % Sprawdzenie czy obecna probka jest wieksza od tymczasowego
+            % maksimum oraz czy odleglosc pomiedzy nimi jest mniejsza od 0.2s
+            if((peakValue(i) > max_value) & ((peakNumber(i) - max_number) < nrOfSamples))
+                max_value = peakValue(i);
+                max_number = peakNumber(i);        
+            % Jesli odleglosc od poprzedniego maksimum jest wieksza od 0.2s,
+            % wartosc ostatniego maksimum jest zapisywana i rozpoczyna sie
+            % wyszukiwanie nowego
+            elseif (peakNumber(i) - max_number >= nrOfSamples)
+                Rpeaks(end+1) = max_number;
+                max_value = peakValue(i);
+                max_number = peakNumber(i);
+            end
+            if (i == length(peakValue) & Rpeaks(end) ~= max_number) 
+                Rpeaks(end+1) = max_number; 
+            end
         end
-        % Jesli odleglosc od poprzedniego maksimum jest wieksza od 0.2s,
-        % wartosc ostatniego maksimum jest zapisywana i rozpoczyna sie
-        % wyszukiwanie nowego
-        if (peak_time(i) - max_time >= 0.2)
-            peakT(end+1) = max_time;
-            peakV(end+1) = max_value;
-            max_value = peak_value(i);
-            max_time = peak_time(i);
-        end
-        if ((i == length(peak_value)) & (peakT(end) ~= max_time))
-            peakT(end+1) = max_time;
-            peakV(end+1) = max_value;
-        end
+    else
+        Rpeaks = peakNumber;
     end
-
-    c = ismember(round(t,4), round(peakT,4));
-    peakS = find(c);
     
     % Przesuniecie o 9 probek (dlugosc filtra FIR)
-    peakS = peakS - 9;
+    Rpeaks = Rpeaks - 9;
 end

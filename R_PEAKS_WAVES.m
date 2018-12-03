@@ -7,10 +7,11 @@
 % signal = syg_MovingAverage;
 % signal = syg_SavitzkyGolay;
 
+
 %% Detekcja zalamkow R oraz p. QRS-onset, QRS-end, P-onset, P-end, T-end
 
-[Rpeaks] = findR (t, signal, fs);
-[QRSonsets, QRSends] = findQRS (t, signal, Rpeaks);
+[Rpeaks] = findR (signal, fs);
+[QRSonsets, QRSends] = findQRS (signal, Rpeaks);
 [Ponsets, Pends] = findP (signal, Rpeaks, QRSonsets, QRSends, fs);
 [Tends] = findT (signal, Rpeaks, QRSonsets, QRSends, Ponsets, fs);
 
@@ -27,8 +28,8 @@ plot(t(Ponsets),signal(Ponsets),'o','MarkerSize',5,'MarkerEdgeColor',...
     [1, 0.058, 0.588],'MarkerFaceColor',[1, 0.058, 0.588])
 plot(t(Pends),signal(Pends),'o','MarkerSize',5,'MarkerEdgeColor',...
     [0.215, 0.882, 0.262],'MarkerFaceColor',[0.215, 0.882, 0.262])
-plot(t(Tends),signal(Tends),'o','MarkerSize',5,'MarkerEdgeColor',...
-    [0.721, 0.098, 0.396],'MarkerFaceColor',[0.721, 0.098, 0.396])
+ plot(t(Tends),signal(Tends),'o','MarkerSize',5,'MarkerEdgeColor',...
+     [0.721, 0.098, 0.396],'MarkerFaceColor',[0.721, 0.098, 0.396])
 xlabel('Czas [s]')
 ylabel('Amplituda [mV]')
 legend('Sygna³ EKG','Za³amek R','QRS-onset','QRS-end','P-onset','P-end',...

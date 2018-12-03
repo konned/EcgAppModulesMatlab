@@ -32,5 +32,5 @@ function [hw] = myfilterdesign(typ_filtra, fs, fc, M, typ_okna)
             okno = 0.42-0.5.*cos(2.*pi.*n./(N-1))+0.08.*cos(4.*pi.*n/(N-1));
     end
 
-    hw = h.*okno;
+    hw = h.*okno; 
 end

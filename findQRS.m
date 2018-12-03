@@ -1,4 +1,4 @@
-function [QRSonset, QRSend] = findQRS (t, signal, Rpeaks)
+function [QRSonset, QRSend] = findQRS (signal, Rpeaks)
     % signal - sygnal EKG 
     % Rpeaks - numery probek odpowiadajacych zalamkom R
     
