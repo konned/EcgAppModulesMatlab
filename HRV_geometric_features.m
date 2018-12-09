@@ -1,7 +1,7 @@
 %% Load signal, filter and count R-peaks
-load -ascii 100_MLII.DAT
+load -ascii 102_V2.DAT
 
-ecg = X100_MLII;
+ecg = X102_V2;
 % figure, plot(signal);
 
 fc1 = 8;
@@ -52,12 +52,26 @@ for i = 1:length(RRintervals)
     differences(i) = abs(RRintervals(i) - average);
 end
 
-% Usuwanie ok. 5% wartoœci skrajnych
-% Do dalszych obliczeñ branych jest tylko 95% wartoœci
+% Usuwanie outliersów bardziej pod cpp
+% Usuwanie znacznie odbiegaj¹cych - dowolna iloœæ zamiast konkretnego
+% procenta próbek
 RR_interv = RRintervals;
-percntiles = prctile(differences, 90);
-outlierIndex = differences > percntiles;
-RR_interv(outlierIndex) = [];
+outliers = [];
+for i = 1:length(RRintervals)
+    if differences(i)>60
+        outliers = [outliers, i];
+    end
+end
+RR_interv(outliers) = [];
+
+% Alternatywna funckja do powy¿szej
+% Usuwanie ok. 10% wartoœci skrajnych
+% Do dalszych obliczeñ branych jest tylko 90% wartoœci
+
+% RR_interv = RRintervals;
+% percntiles = prctile(differences, 90);
+% outlierIndex = differences > percntiles;
+% RR_interv(outlierIndex) = [];
 
 %% Generate histogram
 minimum = (min(RR_interv))/fs;
@@ -69,7 +83,7 @@ bin_width = 1/fs;
 RRintervals_timedomain = RR_interv/fs;
 edges = minimum : 1/fs : maksimum;
 nbins = length(edges);
-hist = histogram(RRintervals_timedomain,nbins)
+hist = histogram(RRintervals_timedomain,nbins);
 title('Histogram odleg³oœci RR')
 xlabel('Odleg³oœci RR [s]')
 ylabel('Czêstoœæ wyst¹pieñ w sygnale')
@@ -93,7 +107,7 @@ hold on;
 % Wyrysowanie prostej y=x
 prosta_min = min(x);
 prosta_max = max(x);
-X = [prosta_min : 0.01 : prosta_max];
+X = prosta_min : 0.01 : prosta_max;
 Y = X;
 plot(X,Y)
 title('Wykres Poincare dla odleg³oœci RR')
@@ -148,7 +162,7 @@ th_SD2 = pi;
 % Wyliczenie punktu koñcowego prostej zaznaczaj¹cej SD1
 SD2_endX = x_centre + rx*cos(th_SD2)*cos(ang_SD2) - ry*sin(th_SD2)*sin(ang_SD2);
 
-SD2_x = linspace(SD2_endX, x_centre)
+SD2_x = linspace(SD2_endX, x_centre);
 SD2_y = SD2_x;
 SD2_plotting = plot(SD2_x, SD2_y,'k','LineWidth',2)
 hold on;
