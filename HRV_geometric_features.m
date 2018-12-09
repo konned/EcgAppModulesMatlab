@@ -71,7 +71,7 @@ edges = minimum : 1/fs : maksimum;
 nbins = length(edges);
 hist = histogram(RRintervals_timedomain,nbins)
 title('Histogram odleg³oœci RR')
-xlabel('Odleg³oœci RR [ms]')
+xlabel('Odleg³oœci RR [s]')
 ylabel('Czêstoœæ wyst¹pieñ w sygnale')
 
 % probplot(RR_interv)
@@ -97,8 +97,8 @@ X = [prosta_min : 0.01 : prosta_max];
 Y = X;
 plot(X,Y)
 title('Wykres Poincare dla odleg³oœci RR')
-xlabel('RR(i) [ms]')
-ylabel('RR(i+1) [ms]')
+xlabel('RR(i) [s]')
+ylabel('RR(i+1) [s]')
 
 %% Wspó³czynniki SD1 i SD2
 
