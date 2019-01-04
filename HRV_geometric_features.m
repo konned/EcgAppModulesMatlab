@@ -1,7 +1,7 @@
 %% Load signal, filter and count R-peaks
-load -ascii 102_V2.DAT
+load -ascii 100_MLII.DAT
 
-ecg = X102_V2;
+ecg = X100_MLII;
 % figure, plot(signal);
 
 fc1 = 8;
@@ -22,24 +22,19 @@ for i = 2:(length(r_peaks))
     RRintervals(i) = r_peaks(i) - r_peaks(i-1);
 end
 
-% Tachogram tylko w celach pogl¹dowych - niepotrzebny do dalszych obliczeñ
-% for i = 1:1:length(RRintervals)
-%     sum = 0;
-%     for j = 1:1:length(RRintervals)
-%         sum = sum + RRintervals(j);
-%         if(i==j)
-%             break;
-%         end
-%     end
-%     time(i) = sum;
-% end
-% figure, plot(time, RRintervals, 'b-o');
-
 
 %% Remove around 20% of outliers
 
 % Wyliczanie ró¿nic odleg³oœci od œredniej odleg³oœci RR
 % Usuwanie RR najbardziej odbiegaj¹cych od œredniej
+
+out = [];
+for i = 1 : length(RRintervals)
+    if RRintervals(i)/fs < 0.6
+       out = [out, i]; 
+    end
+end
+RRintervals(out) = [];
 
 sum = 0;
 for i = 1:length(RRintervals)
@@ -54,11 +49,12 @@ end
 
 % Usuwanie outliersów bardziej pod cpp
 % Usuwanie znacznie odbiegaj¹cych - dowolna iloœæ zamiast konkretnego
-% procenta próbek
+% procenta próbek (lub thres = 50/fs = 0.14 s)
+thres = 50;
 RR_interv = RRintervals;
 outliers = [];
-for i = 1:length(RRintervals)
-    if differences(i)>60
+for i = 1:length(RR_interv)
+    if differences(i)>thres
         outliers = [outliers, i];
     end
 end
@@ -82,7 +78,7 @@ bin_width = 1/fs;
 
 RRintervals_timedomain = RR_interv/fs;
 edges = minimum : 1/fs : maksimum;
-nbins = length(edges);
+nbins = length(edges)-1;
 hist = histogram(RRintervals_timedomain,nbins);
 title('Histogram odleg³oœci RR')
 xlabel('Odleg³oœci RR [s]')
@@ -94,7 +90,7 @@ ylabel('Czêstoœæ wyst¹pieñ w sygnale')
 TINN = (maksimum-minimum)*1000;
 
 %% Indeks trójk¹tny
-ITI = nbins/(max(hist.Values));
+ITI = length(RR_interv)/(max(hist.Values));
 
 %% Wykres Poincare
 RR = RR_interv/fs;
