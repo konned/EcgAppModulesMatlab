@@ -8,10 +8,10 @@ function [Rpeaks] = findR (signal, fs)
 
     signal = differentiation(signal);   % Rozniczkowanie
     signal = signal .^2;                % Potegowanie
-    signal = integration(signal, 19);   % Calkowanie
+    signal = integration(signal, 0.025, fs);   % Calkowanie
 
     % Wyszukiwanie pikow
-    thres = max(signal)/10;
+    thres = max(signal)/15;
     [peakValue, peakNumber] = findPeak(signal,thres);
 
     max_value = peakValue(1);

@@ -15,7 +15,7 @@ function [QRSonset, QRSend] = findQRS (signal, Rpeaks)
        decreasingL = false;
        firstMinReached = false;
        j = Rpeaks(i);
-       while (goLeft)
+       while (goLeft & j>1)
            if (signal(j) > signal(j-1)) 
                decreasingL = true;
            end
@@ -27,6 +27,9 @@ function [QRSonset, QRSend] = findQRS (signal, Rpeaks)
                QRSonset(i) = j; 
                goLeft = false;
            end
+           if (decreasingL == true & j == 2)
+               QRSonset(i) = 1; 
+           end
            j = j-1;
        end
        
@@ -37,7 +40,7 @@ function [QRSonset, QRSend] = findQRS (signal, Rpeaks)
        decreasingR = false;
        firstMinReached = false;
        j = Rpeaks(i);
-       while (goRight)
+       while (goRight & j<length(signal))
            if (signal(j) > signal(j+1)) 
                decreasingR = true;
            end
@@ -47,6 +50,9 @@ function [QRSonset, QRSend] = findQRS (signal, Rpeaks)
            if (firstMinReached == true & decreasingR == true & signal(j) > signal(j+1))
                QRSend(i) = j; 
                goRight = false;
+           end
+           if (decreasingR == true & j == length(signal)-1)
+               QRSend(i) = j+1; 
            end
            j = j+1;
        end

@@ -17,21 +17,38 @@ function [Tends] = findT (signal, Rpeaks, QRSonsets, QRSends, Ponsets, fs)
     for i = 1 : length(QRSends)
         % Poszukiwanie maksimum pochodnej wystepujacego miedzy punktem 
         % ORS-end a P-onset z nastepnego uderzenia
-        startPoint = QRSends(i);
+        if (QRSends(i) ~= length(signal))
+            startPoint = QRSends(i) + 1;
+        else
+            startPoint = QRSends(i);
+        end
+        
         if (i == length(QRSends))
             endPoint = length(signal);
         else 
-            endPoint = Ponsets(i+1);
+            endPoint = Ponsets(i+1) - 1;
         end
-        [maxVal, maxPos] = max(signal(startPoint:endPoint));
-        maxPos = maxPos + startPoint;
+        if (startPoint < endPoint)
+            [maxVal, maxPos] = max(signal(startPoint:endPoint));
+            maxPos = maxPos + startPoint - 1;
+        else 
+            continue;
+        end
+%         if (maxPos == length(signal))
+%             continue;
+%         end
+        
         % Poszukiwanie minimum lokalnego wystepujacego bezposrednio po
         % wczesniej wyszukanym maksimum
-        [a, b] = findpeaks(-signal(maxPos:endPoint));
-        if (length(b) ~= 0)
-            minPos = b(1) + maxPos;
+        if (endPoint - maxPos < 2)
+            continue;
         else
-            continue
+            [a, b] = findpeaks(-signal(maxPos:endPoint));
+            if (length(b) ~= 0)
+                minPos = b(1) + maxPos - 1;
+            else
+                continue;
+            end
         end
 
         % Szukany jest punkt za znalezionym minimum, w ktorym wartosc

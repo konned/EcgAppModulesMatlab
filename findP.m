@@ -37,7 +37,11 @@ function [Ponsets, Pends] = findP (signal, Rpeaks, QRSonsets, QRSends, fs)
                 lookingForZero = false;
                 % Sprawdzenie, czy p. P-end znajduje sie przez QRS-onset
                 if (j >= QRSonsets(i) | abs(QRSonsets(i)-j)<10)
-                    Pends(end+1) = QRSonsets(i) - 10;
+                    if (j > 10 & QRSonsets(i) > 10)
+                        Pends(end+1) = QRSonsets(i) - 10;
+                    else 
+                        Pends(end+1) = QRSonsets(i);
+                    end
                 else
                     Pends(end+1) = j;
                 end
@@ -56,10 +60,18 @@ function [Ponsets, Pends] = findP (signal, Rpeaks, QRSonsets, QRSends, fs)
         % pochodnej jest mniejsza od zadanej wartosci. Jest to p. P-onset
         lookingForZero = true;
         j = maxPos;
-        while (lookingForZero)
+        while (lookingForZero & j>0)
             if (signal(j) <= 0.0003) 
                 lookingForZero = false;
+                if (j > Pends(end))
+                    Ponsets(end+1) = Pends(end);
+                else
+                    Ponsets(end+1) = j;
+                end
+            end
+            if(j == 1)
                 Ponsets(end+1) = j;
+                lookingForZero = false;
             end
             j = j-1;
         end
