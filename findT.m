@@ -32,6 +32,7 @@ function [Tends] = findT (signal, Rpeaks, QRSonsets, QRSends, Ponsets, fs)
             [maxVal, maxPos] = max(signal(startPoint:endPoint));
             maxPos = maxPos + startPoint - 1;
         else 
+            disp('a')
             continue;
         end
 %         if (maxPos == length(signal))
@@ -47,6 +48,8 @@ function [Tends] = findT (signal, Rpeaks, QRSonsets, QRSends, Ponsets, fs)
             if (length(b) ~= 0)
                 minPos = b(1) + maxPos - 1;
             else
+                Tends(end+1) = endPoint;
+                disp('b')
                 continue;
             end
         end

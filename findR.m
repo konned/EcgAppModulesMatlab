@@ -8,11 +8,18 @@ function [Rpeaks] = findR (signal, fs)
 
     signal = differentiation(signal);   % Rozniczkowanie
     signal = signal .^2;                % Potegowanie
-    signal = integration(signal, 0.025, fs);   % Calkowanie
+    
+    W = floor(0.025*fs);
+    if (rem(W,2) == 0)
+        W = ceil(0.025*fs);
+    end
+    signal = integration(signal, 2*W + 1);   % Calkowanie
+    figure, plot(signal)
 
     % Wyszukiwanie pikow
-    thres = max(signal)/15;
+    thres = max(signal)/10;
     [peakValue, peakNumber] = findPeak(signal,thres);
+    peakNumber
 
     max_value = peakValue(1);
     max_number = peakNumber(1);
@@ -24,11 +31,13 @@ function [Rpeaks] = findR (signal, fs)
     % ze odleglosc pomiedzy kolejnymi maksimami jest nie mniejsza niz 0.2s
     if (length(peakValue) > 1) % jezeli znaleziono wiecej niz jedno maksimum
         for i = 2 : length(peakValue)
+            i
             % Sprawdzenie czy obecna probka jest wieksza od tymczasowego
             % maksimum oraz czy odleglosc pomiedzy nimi jest mniejsza od 0.2s
             if((peakValue(i) > max_value) & ((peakNumber(i) - max_number) < nrOfSamples))
                 max_value = peakValue(i);
-                max_number = peakNumber(i);        
+                max_number = peakNumber(i);    
+                disp('a')
             % Jesli odleglosc od poprzedniego maksimum jest wieksza od 0.2s,
             % wartosc ostatniego maksimum jest zapisywana i rozpoczyna sie
             % wyszukiwanie nowego
@@ -36,6 +45,7 @@ function [Rpeaks] = findR (signal, fs)
                 Rpeaks(end+1) = max_number;
                 max_value = peakValue(i);
                 max_number = peakNumber(i);
+                disp('b')
             end
             if (i == length(peakValue) & Rpeaks(end) ~= max_number) 
                 Rpeaks(end+1) = max_number; 
@@ -46,5 +56,5 @@ function [Rpeaks] = findR (signal, fs)
     end
     
     % Przesuniecie o 9 probek (dlugosc filtra FIR)
-    Rpeaks = Rpeaks - 9;
+    Rpeaks = Rpeaks - W;
 end

@@ -1,12 +1,12 @@
 %% Wybor filtra 
 
 % signal = syg_Butterworth;
- signal = syg_Chebyshev;
+% signal = syg_Chebyshev;
 % signal = syg_Keiser;
 % signal = syg_LMS;
 % signal = syg_MovingAverage;
 % signal = syg_SavitzkyGolay;
-
+fs = 360;
 %% Detekcja zalamkow R oraz p. QRS-onset, QRS-end, P-onset, P-end, T-end
 
 [Rpeaks] = findR (signal, fs);
