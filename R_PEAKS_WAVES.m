@@ -1,4 +1,9 @@
 %% Wybor filtra 
+clear all 
+close all
+clc
+
+load 105.mat
 
 % signal = syg_Butterworth;
 % signal = syg_Chebyshev;
@@ -6,14 +11,20 @@
 % signal = syg_LMS;
 % signal = syg_MovingAverage;
 % signal = syg_SavitzkyGolay;
-fs = 360;
+
 %% Detekcja zalamkow R oraz p. QRS-onset, QRS-end, P-onset, P-end, T-end
 
+tic
 [Rpeaks] = findR (signal, fs);
 [QRSonsets, QRSends] = findQRS (signal, Rpeaks);
 [Ponsets, Pends] = findP (signal, Rpeaks, QRSonsets, QRSends, fs);
 [Tends] = findT (signal, Rpeaks, QRSonsets, QRSends, Ponsets, fs);
+toc
 
+fprintf('Rpeaks: %d\nQRSonsets: %d\nQRSends: %d\nPonsets: %d\nPends: %d\nTends: %d\n',...
+    length(Rpeaks),length(QRSonsets),length(QRSends),length(Ponsets),length(Pends),length(Tends))
+
+%%
 figure
 plot(t, signal)
 hold on

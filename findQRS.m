@@ -3,7 +3,7 @@ function [QRSonset, QRSend] = findQRS (signal, Rpeaks)
     % Rpeaks - numery probek odpowiadajacych zalamkom R
     
     % Sprawdzenie, czy sygnal jest "odwrocony"
-    if (signal(Rpeaks(1)) < 0)
+    if (mean(signal(Rpeaks(1:5))) < 0)
            signal = -signal;
     end
        

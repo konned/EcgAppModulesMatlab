@@ -1,7 +1,7 @@
 function [Ponsets, Pends] = findP (signal, Rpeaks, QRSonsets, QRSends, fs)
 
     % Sprawdzenie, czy sygnal jest "odwrocony"
-    if (signal(Rpeaks(1)) < 0)
+    if (mean(signal(Rpeaks(1:5))) < 0)
            signal = -signal;
     end
     

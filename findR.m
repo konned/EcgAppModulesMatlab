@@ -17,9 +17,8 @@ function [Rpeaks] = findR (signal, fs)
     figure, plot(signal)
 
     % Wyszukiwanie pikow
-    thres = max(signal)/10;
+    thres = max(signal)/15;
     [peakValue, peakNumber] = findPeak(signal,thres);
-    peakNumber
 
     max_value = peakValue(1);
     max_number = peakNumber(1);
@@ -31,13 +30,11 @@ function [Rpeaks] = findR (signal, fs)
     % ze odleglosc pomiedzy kolejnymi maksimami jest nie mniejsza niz 0.2s
     if (length(peakValue) > 1) % jezeli znaleziono wiecej niz jedno maksimum
         for i = 2 : length(peakValue)
-            i
             % Sprawdzenie czy obecna probka jest wieksza od tymczasowego
             % maksimum oraz czy odleglosc pomiedzy nimi jest mniejsza od 0.2s
             if((peakValue(i) > max_value) & ((peakNumber(i) - max_number) < nrOfSamples))
                 max_value = peakValue(i);
                 max_number = peakNumber(i);    
-                disp('a')
             % Jesli odleglosc od poprzedniego maksimum jest wieksza od 0.2s,
             % wartosc ostatniego maksimum jest zapisywana i rozpoczyna sie
             % wyszukiwanie nowego
@@ -45,7 +42,6 @@ function [Rpeaks] = findR (signal, fs)
                 Rpeaks(end+1) = max_number;
                 max_value = peakValue(i);
                 max_number = peakNumber(i);
-                disp('b')
             end
             if (i == length(peakValue) & Rpeaks(end) ~= max_number) 
                 Rpeaks(end+1) = max_number; 

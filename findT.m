@@ -1,7 +1,7 @@
 function [Tends] = findT (signal, Rpeaks, QRSonsets, QRSends, Ponsets, fs)
 
     % Sprawdzenie, czy sygnal jest "odwrocony"
-    if (signal(Rpeaks(1)) < 0)
+    if (mean(signal(Rpeaks(1:5))) < 0)
            signal = -signal;
     end
     
@@ -32,7 +32,7 @@ function [Tends] = findT (signal, Rpeaks, QRSonsets, QRSends, Ponsets, fs)
             [maxVal, maxPos] = max(signal(startPoint:endPoint));
             maxPos = maxPos + startPoint - 1;
         else 
-            disp('a')
+            fprintf('%d: a\n', i)
             continue;
         end
 %         if (maxPos == length(signal))
@@ -42,6 +42,7 @@ function [Tends] = findT (signal, Rpeaks, QRSonsets, QRSends, Ponsets, fs)
         % Poszukiwanie minimum lokalnego wystepujacego bezposrednio po
         % wczesniej wyszukanym maksimum
         if (endPoint - maxPos < 2)
+            fprintf('%d: b\n', i)
             continue;
         else
             [a, b] = findpeaks(-signal(maxPos:endPoint));
@@ -49,7 +50,6 @@ function [Tends] = findT (signal, Rpeaks, QRSonsets, QRSends, Ponsets, fs)
                 minPos = b(1) + maxPos - 1;
             else
                 Tends(end+1) = endPoint;
-                disp('b')
                 continue;
             end
         end
@@ -58,6 +58,7 @@ function [Tends] = findT (signal, Rpeaks, QRSonsets, QRSends, Ponsets, fs)
         % pochodnej jest wieksza od zadanej wartosci. Jest to p. T-end
         lookingForZero = true;
         j = minPos;
+        abc = 0;
         while (lookingForZero)
             if (signal(j) >= -0.0005) 
                 lookingForZero = false;
