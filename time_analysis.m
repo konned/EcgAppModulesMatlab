@@ -1,10 +1,10 @@
 function [RR_mean, SDNN, RMSSD, NN50, pNN50] = time_analysis(RRintervals)
 
 %Average
-RR_mean=mean(RRintervals);
+RR_mean=mean(RRintervals)
 
 %Standard deviation
-SDNN=std(RRintervals);
+SDNN=std(RRintervals)
 
 %Root mean square of successive differences
 N = length(RRintervals);
@@ -14,7 +14,7 @@ for i=2:1:N
 end
 
 temp2 = temp/(N - 1);
-RMSSD= sqrt(temp2);
+RMSSD= sqrt(temp2)
 
 
 %NN50
@@ -25,13 +25,13 @@ end
 
 NN50 = 0;
 for k=1:1:N-1
-   if (abs(temp1(k))>50)
-       NN50 = NN50 +1;
+   if (abs(temp1(k))>0.05)
+       NN50 = NN50 +1
    end
 end
 
 
 %pNN50
-pNN50 = (NN50/(N-1)) * 100;
+pNN50 = (NN50/(N-1)) * 100
 
 end
